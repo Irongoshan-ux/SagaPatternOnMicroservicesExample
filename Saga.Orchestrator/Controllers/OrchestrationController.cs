@@ -61,6 +61,7 @@ namespace Saga.Orchestrator.Controllers
             var notificationClient = _httpClientFactory.CreateClient("Notifier");
             var notificationResponse = await notificationClient.PostAsJsonAsync("/api/notifier", order);
             var notificationId = await notificationResponse.Content.ReadAsStringAsync();
+
             return notificationId;
         }
         
@@ -69,7 +70,7 @@ namespace Saga.Orchestrator.Controllers
             var orderClient = _httpClientFactory.CreateClient("Order");
             var orderResponse = await orderClient.PostAsJsonAsync("/api/order", orderAfterWithdrawMoney);
 
-            if (orderResponse.StatusCode != System.Net.HttpStatusCode.OK)
+            if (!IsOkStatusCode(orderResponse))
                 return (string.Empty, orderClient);
 
             var orderId = await orderResponse.Content.ReadAsStringAsync();
@@ -86,7 +87,7 @@ namespace Saga.Orchestrator.Controllers
                 var inventoryClient = _httpClientFactory.CreateClient("Inventory");
                 var inventoryResponse = await inventoryClient.PostAsJsonAsync("/api/inventory", order);
 
-                if (inventoryResponse.StatusCode != System.Net.HttpStatusCode.OK)
+                if (!IsOkStatusCode(inventoryResponse))
                     throw new Exception(inventoryResponse.ReasonPhrase);
 
                 inventoryId = await inventoryResponse.Content.ReadAsStringAsync();
@@ -102,5 +103,8 @@ namespace Saga.Orchestrator.Controllers
 
             return inventoryId;
         }
+
+        private static bool IsOkStatusCode(HttpResponseMessage response) =>
+            response.StatusCode != System.Net.HttpStatusCode.OK;
     }
 }
