@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Shared;
 
 namespace Notifier.Controllers
 {
@@ -17,19 +18,19 @@ namespace Notifier.Controllers
         }
 
         [HttpPost]
-        public string Post(Notifier notifier)
+        public string Post(Order orderForNotifier)
         {
-            EntityEntry<Notifier> addedOrder;
+            EntityEntry<Order> addedOrder;
 
             try
             {
-                addedOrder = _context.Notifiers.Add(notifier);
+                addedOrder = _context.Notifiers.Add(orderForNotifier);
 
-                _logger.LogInformation($"Updated notification for: {notifier.ProductName}");
+                _logger.LogInformation($"Updated notification for: {orderForNotifier.ProductName}");
             }
             catch (Exception ex)
             {
-                _logger.LogInformation($"There is exception with order: {notifier.ProductName}");
+                _logger.LogInformation($"There is exception with order: {orderForNotifier.ProductName}");
                 throw new Exception(ex.Message);
             }
 
@@ -46,7 +47,10 @@ namespace Notifier.Controllers
             var notifier = _context.Notifiers.FirstOrDefault(x => x.Id == id);
 
             if (notifier is not null)
+            {
                 _context.Notifiers.Remove(notifier);
+                _context.SaveChanges();
+            }
         }
     }
 }

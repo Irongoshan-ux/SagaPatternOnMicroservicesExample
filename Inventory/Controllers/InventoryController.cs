@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Shared;
 
 namespace Inventory.Controllers
 {
@@ -17,19 +18,19 @@ namespace Inventory.Controllers
         }
 
         [HttpPost]
-        public string Post(Inventory inventory)
+        public string Post(Order orderForInventory)
         {
-            EntityEntry<Inventory> addedOrder;
+            EntityEntry<Order> addedOrder;
 
             try
             {
-                addedOrder = _context.Inventories.Add(inventory);
+                addedOrder = _context.Orders.Add(orderForInventory);
                 
-                _logger.LogInformation($"Created new order: {inventory.ProductName}");
+                _logger.LogInformation($"Created new order: {orderForInventory.ProductName}");
             }
             catch (Exception ex)
             {
-                _logger.LogInformation($"There is exception with order: {inventory.ProductName}");
+                _logger.LogInformation($"There is exception with order: {orderForInventory.ProductName}");
                 throw new Exception(ex.Message);
             }
 
@@ -43,10 +44,10 @@ namespace Inventory.Controllers
         {
             _logger.LogInformation($"Deleted inventory");
 
-            var inventory = _context.Inventories.FirstOrDefault(x => x.Id == id);
+            var inventory = _context.Orders.FirstOrDefault(x => x.Id == id);
 
             if (inventory is not null)
-                _context.Inventories.Remove(inventory);
+                _context.Orders.Remove(inventory);
         }
     }
 }

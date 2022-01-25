@@ -17,12 +17,12 @@ namespace Order.Controllers
         }
 
         [HttpPost]
-        public string Post(Order order)
+        public string Post(Shared.Order order)
         {
             if(!Guid.TryParse(order.Id, out Guid orderId))
                 order.Id = Guid.NewGuid().ToString();
 
-            EntityEntry<Order> addedOrder;
+            EntityEntry<Shared.Order> addedOrder;
             
             try
             {
