@@ -17,8 +17,14 @@ namespace Saga.Orchestrator.Controllers
         }
 
         [HttpPost]
-        public async Task<OrderResponse> Post(Order order)
+        public async Task<OrderResponse> Post(OrderDto orderDto)
         {
+            var order = new Order
+            {
+                Id = Guid.NewGuid().ToString(),
+                ProductName = orderDto.ProductName
+            };
+
             // Create order
             var orderClient = _httpClientFactory.CreateClient("Order");
             var orderResponse = await orderClient.PostAsJsonAsync("/api/order", order);
