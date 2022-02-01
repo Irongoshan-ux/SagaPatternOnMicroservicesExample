@@ -1,0 +1,89 @@
+version: '3.4'
+
+services:
+  mssql1:
+    image: "mcr.microsoft.com/mssql/server"
+    environment:
+      SA_PASSWORD: "somepassword.01"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "4306:4306"
+    networks:
+      - backend
+
+  mssql2:
+    image: "mcr.microsoft.com/mssql/server"
+    environment:
+      SA_PASSWORD: "somepassword.01"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "4316:4316"
+    networks:
+      - backend
+
+  mssql3:
+    image: "mcr.microsoft.com/mssql/server"
+    environment:
+      SA_PASSWORD: "somepassword.01"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "4326:4326"
+    networks:
+      - backend
+
+
+  saga.orchestrator:
+    image: ${DOCKER_REGISTRY-}sagaorchestrator
+    build:
+      context: .
+      dockerfile: Saga.Orchestrator/Dockerfile
+    ports:
+      - "11000:80"
+      - "11001:443"
+    networks:
+      - backend
+
+
+  inventory:
+    image: ${DOCKER_REGISTRY-}inventory
+    build:
+      context: .
+      dockerfile: Inventory/Dockerfile
+    ports:
+      - "5020:80"
+      - "5021:443"
+    depends_on:
+      - mssql1
+    networks:
+      - backend
+
+  notifier:
+    image: ${DOCKER_REGISTRY-}notifier
+    build:
+      context: .
+      dockerfile: Notifier/Dockerfile
+    ports:
+      - "5030:80"
+      - "5031:443"
+    depends_on:
+      - mssql2
+    networks:
+      - backend
+
+
+  order:
+    image: ${DOCKER_REGISTRY-}order
+    build:
+      context: .
+      dockerfile: FirstService/Dockerfile
+    ports:
+      - "5010:80"
+      - "5011:443"
+    depends_on:
+      - mssql3
+    networks:
+      - backend
+
+networks:    
+  backend:
+    driver: bridge

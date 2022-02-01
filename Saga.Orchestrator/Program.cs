@@ -7,11 +7,11 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddHttpClient("Order", c =>
-                                        c.BaseAddress = new Uri("https://localhost:5011"));
+                                        c.BaseAddress = new Uri("https://order:5010"));
 builder.Services.AddHttpClient("Inventory", c =>
-                                        c.BaseAddress = new Uri("https://localhost:5021"));
+                                        c.BaseAddress = new Uri("https://inventory" /*"https://localhost:5021"*/));
 builder.Services.AddHttpClient("Notifier", c =>
-                                        c.BaseAddress = new Uri("https://localhost:5031"));
+                                        c.BaseAddress = new Uri("https://notifier" /*"https://localhost:5031"*/));
 
 var app = builder.Build();
 
